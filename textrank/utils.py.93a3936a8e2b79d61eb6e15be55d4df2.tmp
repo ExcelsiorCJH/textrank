@@ -29,19 +29,14 @@ def get_tokenizer(tokenizer_name):
     elif tokenizer_name == "kkma":
         tokenizer = Kkma()
     else:
-        return None
-
+        tokenizer = Mecab()
     return tokenizer
 
 
 def get_tokens(sent: List[str], noun=False, tokenizer="mecab") -> List[str]:
     tokenizer = get_tokenizer(tokenizer)
 
-    if tokenizer:
-        if noun:
-            nouns = tokenizer.nouns(sent)
-            nouns = [word for word in nouns if len(word) > 1]
-            return nouns
-        return tokenizer.morphs(sent)
-    else:
-        return sent.split()
+    if noun:
+        return tokenizer.nouns(sent)
+
+    return tokenizer.morphs(sent)
