@@ -18,31 +18,31 @@ class TextRank:
         method="iterative",
         stopwords: List[str] = ["뉴스", "기자"],
     ):
-    """
-    TextRank Class
-    ==============
+        """
+        TextRank Class
+        ==============
 
-    Arguments
-    ---------
-    min_count : int 
-        Minumum frequency of words will be used to construct sentence graph
-    min_sim : float
-        Minimum similarity of sents or words will be used to construct sentence graph
-    tokenizer : str
-        Tokenizer for korean, default is mecab
-    noun : bool
-        option for using just nouns, default is False but True when use keyword extraction
-    similarity : str
-        available similarity = ['cosine', 'textrank']
-    df : float
-        PageRank damping factor, default is 0.85
-    max_iter : int
-        Number of PageRank iterations
-    method : str
-        available method = ['iterative', 'algebraic']
-    stopwords: list of str
-        Stopwords for Korean
-    """
+        Arguments
+        ---------
+        min_count : int 
+            Minumum frequency of words will be used to construct sentence graph
+        min_sim : float
+            Minimum similarity of sents or words will be used to construct sentence graph
+        tokenizer : str
+            Tokenizer for korean, default is mecab
+        noun : bool
+            option for using just nouns, default is False but True when use keyword extraction
+        similarity : str
+            available similarity = ['cosine', 'textrank']
+        df : float
+            PageRank damping factor, default is 0.85
+        max_iter : int
+            Number of PageRank iterations
+        method : str
+            available method = ['iterative', 'algebraic']
+        stopwords: list of str
+            Stopwords for Korean
+        """
 
         self.tokenizer = tokenizer
         self.min_count = min_count
