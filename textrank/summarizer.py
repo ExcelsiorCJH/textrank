@@ -8,14 +8,14 @@ from .types_ import *
 class TextRank:
     def __init__(
         self,
-        min_count=2,
-        min_sim=0.3,
-        tokenizer="mecab",
-        noun=False,
-        similarity="cosine",
-        df=0.85,
-        max_iter=50,
-        method="iterative",
+        min_count: int = 2,
+        min_sim: float = 0.3,
+        tokenizer: str = "mecab",
+        noun: bool = False,
+        similarity: str = "cosine",
+        df: float = 0.85,
+        max_iter: int = 50,
+        method: str = "iterative",
         stopwords: List[str] = ["뉴스", "기자"],
     ):
         """
@@ -54,7 +54,7 @@ class TextRank:
         self.method = method
         self.stopwords = stopwords
 
-    def sent_textrank(self, sents):
+    def sent_textrank(self, sents: List[str]) -> None:
         G = sent_graph(
             sents,
             self.min_count,
@@ -68,7 +68,7 @@ class TextRank:
         self.R = pagerank(G, self.df, self.max_iter, self.method)
         return None
 
-    def word_textrank(self, sents):
+    def word_textrank(self, sents: List[str]) -> None:
         G, _, self.idx_vocab = word_graph(
             sents,
             self.min_count,
@@ -81,13 +81,13 @@ class TextRank:
         self.wr = pagerank(G, self.df, self.max_iter, self.method)
         return None
 
-    def summarize(self, sents, topk=3):
+    def summarize(self, sents: List[str], topk: int = 3) -> List[str]:
         self.sent_textrank(sents)
         idxs = self.R.argsort()[-topk:]
         keysents = [(idx, sents[idx]) for idx in sorted(idxs)]
         return keysents
 
-    def keywords(self, sents, topk=10):
+    def keywords(self, sents: List[str], topk: int = 10) -> List[str]:
         self.word_textrank(sents)
         idxs = self.wr.argsort()[-topk:]
         keywords = [self.idx_vocab[idx] for idx in reversed(idxs)]

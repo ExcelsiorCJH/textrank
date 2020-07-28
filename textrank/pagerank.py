@@ -2,7 +2,9 @@ import numpy as np
 from sklearn.preprocessing import normalize
 
 
-def pagerank(x: np.ndarray, df=0.85, max_iter=50, method="iterative"):
+def pagerank(
+    x: np.ndarray, df: float = 0.85, max_iter: int = 50, method: str = "iterative"
+) -> np.ndarray:
     """
     PageRank method
     ==================

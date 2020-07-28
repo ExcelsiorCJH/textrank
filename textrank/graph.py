@@ -8,7 +8,13 @@ from .utils import get_tokens
 from .types_ import *
 
 
-def vectorize_sents(sents: List[str], stopwords=None, min_count=2, tokenizer="mecab", noun=False):
+def vectorize_sents(
+    sents: List[str],
+    stopwords: List[str] = None,
+    min_count: int = 2,
+    tokenizer: str = "mecab",
+    noun: bool = False,
+) -> Union[np.ndarray, Dict, Dict]:
 
     vectorizer = CountVectorizer(
         stop_words=stopwords,
@@ -22,7 +28,7 @@ def vectorize_sents(sents: List[str], stopwords=None, min_count=2, tokenizer="me
     return vec, vocab_idx, idx_vocab
 
 
-def similarity_matrix(x, min_sim=0.3, min_length=1):
+def similarity_matrix(x: np.ndarray, min_sim: float = 0.3, min_length: int = 1) -> np.ndarray:
     """
     $$
     sim(s_1, s_2) = 
@@ -49,14 +55,14 @@ def similarity_matrix(x, min_sim=0.3, min_length=1):
     return sim_mat
 
 
-def cosine_similarity_matrix(x, min_sim=0.3):
+def cosine_similarity_matrix(x: np.ndarray, min_sim: float = 0.3) -> np.ndarray:
     sim_mat = 1 - pairwise_distances(x, metric="cosine")
     sim_mat[np.where(sim_mat <= min_sim)] = 0
 
     return sim_mat
 
 
-def word_similarity_matrix(x, min_sim=0.3):
+def word_similarity_matrix(x, min_sim=0.3) -> np.ndarray:
     sim_mat = 1 - pairwise_distances(x.T, metric="cosine")
     sim_mat[np.where(sim_mat <= min_sim)] = 0
 
@@ -65,13 +71,13 @@ def word_similarity_matrix(x, min_sim=0.3):
 
 def sent_graph(
     sents: List[str],
-    min_count=2,
-    min_sim=0.3,
-    tokenizer="mecab",
-    noun=False,
-    similarity=None,
+    min_count: int = 2,
+    min_sim: float = 0.3,
+    tokenizer: str = "mecab",
+    noun: bool = False,
+    similarity: bool = None,
     stopwords: List[str] = ["뉴스", "그리고"],
-):
+) -> np.ndarray:
 
     mat, vocab_idx, idx_vocab = vectorize_sents(
         sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun
@@ -87,10 +93,10 @@ def sent_graph(
 
 def word_graph(
     sents: List[str],
-    min_count=2,
-    min_sim=0.3,
-    tokenizer="mecab",
-    noun=True,
+    min_count: int = 2,
+    min_sim: float = 0.3,
+    tokenizer: str = "mecab",
+    noun: bool = True,
     stopwords: List[str] = ["뉴스", "그리고", "기자"],
 ):
 

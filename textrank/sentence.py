@@ -8,7 +8,13 @@ from .utils import get_tokens
 from .types_ import *
 
 
-def vectorize_sents(sents: List[str], stopwords=None, min_count=2, tokenizer="mecab", noun=False):
+def vectorize_sents(
+    sents: List[str],
+    stopwords: List[str] = None,
+    min_count: int = 2,
+    tokenizer: str = "mecab",
+    noun: bool = False,
+):
 
     vectorizer = CountVectorizer(
         stop_words=stopwords,

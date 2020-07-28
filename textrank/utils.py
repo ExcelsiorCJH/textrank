@@ -17,7 +17,7 @@ else:  # Ubuntu일 경우
 from types_ import *
 
 
-def get_tokenizer(tokenizer_name):
+def get_tokenizer(tokenizer_name: str = "mecab") -> "tokenizer":
     if tokenizer_name == "komoran":
         tokenizer = Komoran()
     elif tokenizer_name == "okt":
@@ -34,7 +34,7 @@ def get_tokenizer(tokenizer_name):
     return tokenizer
 
 
-def get_tokens(sent: List[str], noun=False, tokenizer="mecab") -> List[str]:
+def get_tokens(sent: List[str], noun: bool = False, tokenizer: str = "mecab") -> List[str]:
     tokenizer = get_tokenizer(tokenizer)
 
     if tokenizer:
