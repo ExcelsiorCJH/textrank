@@ -44,6 +44,7 @@ parser.add_argument(
 parser.add_argument("--df", type=float, default=0.85, help="PageRank damping factor")
 parser.add_argument("--max_iter", type=int, default=50, help="Number of PageRank iterations")
 parser.add_argument("--method", type=str, default="iterative", help="Number of PageRank iterations")
+parser.add_argument("--topk", type=int, default=3, help="Number of sentences/words to summarize")
 # data
 parser.add_argument("--data_type", type=str, default="cnndm", help="Data type to load")
 
@@ -77,12 +78,12 @@ if __name__ == "__main__":
 
     # extraction setences or keywords
     if args.mode == "sentences":
-        results = textrank.summarize(sents)
+        results = textrank.summarize(sents, topk=args.topk)
         results = [sent for _, sent in results]
         results = "\n".join(results)
     else:
         args.mode = "words"
-        results = textrank.keywords(sents)
+        results = textrank.keywords(sents, topk=args.topk)
 
     print(f"{args.mode}")
     print("=" * 20)
