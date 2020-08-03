@@ -29,9 +29,9 @@ keywords = textrank.keywords(sents)
 
 ```shell
 # sentences extraction
-$ python main.py --mode sentences --data_type news --tokenizer mecab
+$ python main.py --mode sentences --data_type news --tokenizer mecab  --topk 3
 # keywords extraction
-$ python main.py --mode words --data_type news --tokenizer mecab
+$ python main.py --mode words --data_type news --tokenizer mecab --topk 3
 ```
 
 ## References
