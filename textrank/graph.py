@@ -5,7 +5,7 @@ from sklearn.metrics import pairwise_distances
 from sklearn.feature_extraction.text import CountVectorizer
 
 from .utils import get_tokens
-from .types_ import *
+from utils.types_ import *
 
 
 def vectorize_sents(

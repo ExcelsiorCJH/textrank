@@ -2,7 +2,7 @@ import numpy as np
 
 from .pagerank import pagerank
 from .graph import sent_graph, word_graph
-from .types_ import *
+from utils.types_ import *
 
 
 class TextRank:

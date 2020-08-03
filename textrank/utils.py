@@ -14,7 +14,7 @@ if platform.system() == "Windows":
 else:  # Ubuntu일 경우
     from konlpy.tag import Mecab
 
-from types_ import *
+from utils.types_ import *
 
 
 def get_tokenizer(tokenizer_name: str = "mecab") -> "tokenizer":

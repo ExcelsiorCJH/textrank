@@ -6,7 +6,9 @@ Code for [TextRank: Brining Order into Texts](https://web.eecs.umich.edu/~mihalc
 Some codes and spliting files are inspired by [lovit/textrank](https://github.com/lovit/textrank)
 
 
-## Usage
+## Usage 
+
+### in Python
 
 ```python
 from textrank import TextRank
@@ -21,6 +23,15 @@ keysents = textrank.summarize(sents)
 
 # keywords extraction
 keywords = textrank.keywords(sents)
+```
+
+### in Shell
+
+```shell
+# sentences extraction
+$ python main.py --mode sentences --data_type news --tokenizer mecab
+# keywords extraction
+$ python main.py --mode words --data_type news --tokenizer mecab
 ```
 
 ## References

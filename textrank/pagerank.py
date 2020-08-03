@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.preprocessing import normalize
 
+from utils.types_ import *
+
 
 def pagerank(
     x: np.ndarray, df: float = 0.85, max_iter: int = 50, method: str = "iterative"
