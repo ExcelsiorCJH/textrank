@@ -3,6 +3,7 @@ import numpy as np
 from functools import partial
 from sklearn.metrics import pairwise_distances
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .utils import get_tokens
 from utils.types_ import *
@@ -14,13 +15,21 @@ def vectorize_sents(
     min_count: int = 2,
     tokenizer: str = "mecab",
     noun: bool = False,
+    mode: str = "tfidf",
 ) -> Union[np.ndarray, Dict, Dict]:
 
-    vectorizer = CountVectorizer(
-        stop_words=stopwords,
-        tokenizer=partial(get_tokens, noun=noun, tokenizer=tokenizer),
-        min_df=min_count,
-    )
+    if mode == "tfidf":
+        vectorizer = TfidfVectorizer(
+            stop_words=stopwords,
+            tokenizer=partial(get_tokens, noun=noun, tokenizer="mecab"),
+            min_df=min_count,
+        )
+    else:
+        vectorizer = CountVectorizer(
+            stop_words=stopwords,
+            tokenizer=partial(get_tokens, noun=noun, tokenizer=tokenizer),
+            min_df=min_count,
+        )
 
     vec = vectorizer.fit_transform(sents)
     vocab_idx = vectorizer.vocabulary_
@@ -76,11 +85,12 @@ def sent_graph(
     tokenizer: str = "mecab",
     noun: bool = False,
     similarity: bool = None,
+    mode: str = "tfidf",
     stopwords: List[str] = ["뉴스", "그리고"],
 ) -> np.ndarray:
 
     mat, vocab_idx, idx_vocab = vectorize_sents(
-        sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun
+        sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun, mode=mode,
     )
 
     if similarity == "cosine":
@@ -97,11 +107,12 @@ def word_graph(
     min_sim: float = 0.3,
     tokenizer: str = "mecab",
     noun: bool = True,
+    mode: str = "tfidf",
     stopwords: List[str] = ["뉴스", "그리고", "기자"],
 ):
 
     mat, vocab_idx, idx_vocab = vectorize_sents(
-        sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun
+        sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun, mode=mode,
     )
 
     mat = word_similarity_matrix(mat, min_sim=min_sim)
