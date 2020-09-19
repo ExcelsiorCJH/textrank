@@ -10,8 +10,10 @@ class TextRank:
         self,
         min_count: int = 2,
         min_sim: float = 0.3,
+        language: str = "ko",
         tokenizer: str = "mecab",
         noun: bool = False,
+        vectorizer: str = "tfidf",
         similarity: str = "cosine",
         df: float = 0.85,
         max_iter: int = 50,
@@ -28,10 +30,14 @@ class TextRank:
             Minumum frequency of words will be used to construct sentence graph
         min_sim : float
             Minimum similarity of sents or words will be used to construct sentence graph
+        language: str
+            available language = ['ko', 'en']
         tokenizer : str
             Tokenizer for korean, default is mecab
         noun : bool
             option for using just nouns, default is False but True when use keyword extraction
+        vectorizer: str
+            available vectorizer = ['tfidf', 'count']
         similarity : str
             available similarity = ['cosine', 'textrank']
         df : float
@@ -44,10 +50,12 @@ class TextRank:
             Stopwords for Korean
         """
 
+        self.language = language
         self.tokenizer = tokenizer
         self.min_count = min_count
         self.min_sim = min_sim
         self.noun = noun
+        self.vectorizer = vectorizer
         self.similarity = similarity
         self.df = df
         self.max_iter = max_iter
@@ -56,13 +64,15 @@ class TextRank:
 
     def sent_textrank(self, sents: List[str]) -> None:
         G = sent_graph(
-            sents,
-            self.min_count,
-            self.min_sim,
-            self.tokenizer,
-            self.noun,
-            self.similarity,
-            self.stopwords,
+            sents=sents,
+            language=self.language,
+            min_count=self.min_count,
+            min_sim=self.min_sim,
+            tokenizer=self.tokenizer,
+            noun=self.noun,
+            similarity=self.similarity,
+            vectorizer=self.vectorizer,
+            stopwords=self.stopwords,
         )
 
         self.R = pagerank(G, self.df, self.max_iter, self.method)
@@ -70,11 +80,13 @@ class TextRank:
 
     def word_textrank(self, sents: List[str]) -> None:
         G, _, self.idx_vocab = word_graph(
-            sents,
-            self.min_count,
-            self.min_sim,
-            self.tokenizer,
+            sents=sents,
+            language=self.language,
+            min_count=self.min_count,
+            min_sim=self.min_sim,
+            tokenizer=self.tokenizer,
             noun=True,
+            vectorizer=self.vectorizer,
             stopwords=self.stopwords,
         )
 

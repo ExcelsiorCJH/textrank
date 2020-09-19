@@ -6,30 +6,42 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .utils import get_tokens
+from .utils import LemmaTokenizer
 from utils.types_ import *
 
 
 def vectorize_sents(
     sents: List[str],
+    language: str = "ko",
     stopwords: List[str] = None,
     min_count: int = 2,
     tokenizer: str = "mecab",
     noun: bool = False,
-    mode: str = "tfidf",
+    vec_type: str = "tfidf",
 ) -> Union[np.ndarray, Dict, Dict]:
 
-    if mode == "tfidf":
-        vectorizer = TfidfVectorizer(
-            stop_words=stopwords,
-            tokenizer=partial(get_tokens, noun=noun, tokenizer="mecab"),
-            min_df=min_count,
-        )
+    if vec_type == "tfidf":
+        if language == "ko":
+            vectorizer = TfidfVectorizer(
+                stop_words=stopwords,
+                tokenizer=partial(get_tokens, noun=noun, tokenizer="mecab"),
+                min_df=min_count,
+            )
+        else:
+            vectorizer = TfidfVectorizer(
+                stop_words=stopwords, tokenizer=LemmaTokenizer(use_pos=noun), min_df=min_count,
+            )
     else:
-        vectorizer = CountVectorizer(
-            stop_words=stopwords,
-            tokenizer=partial(get_tokens, noun=noun, tokenizer=tokenizer),
-            min_df=min_count,
-        )
+        if language == "ko":
+            vectorizer = CountVectorizer(
+                stop_words=stopwords,
+                tokenizer=partial(get_tokens, noun=noun, tokenizer=tokenizer),
+                min_df=min_count,
+            )
+        else:
+            vectorizer = CountVectorizer(
+                stop_words=stopwords, tokenizer=LemmaTokenizer(use_pos=noun), min_df=min_count,
+            )
 
     vec = vectorizer.fit_transform(sents)
     vocab_idx = vectorizer.vocabulary_
@@ -80,17 +92,24 @@ def word_similarity_matrix(x, min_sim=0.3) -> np.ndarray:
 
 def sent_graph(
     sents: List[str],
+    language: str = "ko",
     min_count: int = 2,
     min_sim: float = 0.3,
     tokenizer: str = "mecab",
     noun: bool = False,
     similarity: bool = None,
-    mode: str = "tfidf",
+    vectorizer: str = "tfidf",
     stopwords: List[str] = ["뉴스", "그리고"],
 ) -> np.ndarray:
 
     mat, vocab_idx, idx_vocab = vectorize_sents(
-        sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun, mode=mode,
+        sents=sents,
+        language=language,
+        stopwords=stopwords,
+        min_count=min_count,
+        tokenizer=tokenizer,
+        noun=noun,
+        vec_type=vectorizer,
     )
 
     if similarity == "cosine":
@@ -103,16 +122,23 @@ def sent_graph(
 
 def word_graph(
     sents: List[str],
+    language: str = "ko",
     min_count: int = 2,
     min_sim: float = 0.3,
     tokenizer: str = "mecab",
     noun: bool = True,
-    mode: str = "tfidf",
+    vectorizer: str = "tfidf",
     stopwords: List[str] = ["뉴스", "그리고", "기자"],
 ):
 
     mat, vocab_idx, idx_vocab = vectorize_sents(
-        sents, stopwords, min_count=min_count, tokenizer=tokenizer, noun=noun, mode=mode,
+        sents=sents,
+        language=language,
+        stopwords=stopwords,
+        min_count=min_count,
+        tokenizer=tokenizer,
+        noun=noun,
+        vec_type=vectorizer,
     )
 
     mat = word_similarity_matrix(mat, min_sim=min_sim)
