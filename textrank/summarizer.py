@@ -1,5 +1,6 @@
 import numpy as np
 
+import gensim
 from .pagerank import pagerank
 from .graph import sent_graph, word_graph
 from utils.types_ import *
@@ -12,6 +13,7 @@ class TextRank:
         min_sim: float = 0.3,
         language: str = "ko",
         tokenizer: str = "mecab",
+        model: str = "gensim",
         noun: bool = False,
         vectorizer: str = "tfidf",
         similarity: str = "cosine",
@@ -26,7 +28,7 @@ class TextRank:
 
         Arguments
         ---------
-        min_count : int 
+        min_count : int
             Minumum frequency of words will be used to construct sentence graph
         min_sim : float
             Minimum similarity of sents or words will be used to construct sentence graph
@@ -34,6 +36,8 @@ class TextRank:
             available language = ['ko', 'en']
         tokenizer : str
             Tokenizer for korean, default is mecab
+        model : str
+            if language is 'en' then model options are ['gensim', 'textrank']
         noun : bool
             option for using just nouns, default is False but True when use keyword extraction
         vectorizer: str
@@ -52,6 +56,7 @@ class TextRank:
 
         self.language = language
         self.tokenizer = tokenizer
+        self.model = model
         self.min_count = min_count
         self.min_sim = min_sim
         self.noun = noun
@@ -62,7 +67,7 @@ class TextRank:
         self.method = method
         self.stopwords = stopwords
 
-    def sent_textrank(self, sents: List[str]) -> None:
+    def _sent_textrank(self, sents: List[str]) -> None:
         G = sent_graph(
             sents=sents,
             language=self.language,
@@ -74,11 +79,10 @@ class TextRank:
             vectorizer=self.vectorizer,
             stopwords=self.stopwords,
         )
-
         self.R = pagerank(G, self.df, self.max_iter, self.method)
         return None
 
-    def word_textrank(self, sents: List[str]) -> None:
+    def _word_textrank(self, sents: List[str]) -> None:
         G, _, self.idx_vocab = word_graph(
             sents=sents,
             language=self.language,
@@ -89,18 +93,25 @@ class TextRank:
             vectorizer=self.vectorizer,
             stopwords=self.stopwords,
         )
-
         self.wr = pagerank(G, self.df, self.max_iter, self.method)
         return None
 
     def summarize(self, sents: List[str], topk: int = 3) -> List[str]:
-        self.sent_textrank(sents)
-        idxs = self.R.argsort()[-topk:]
-        keysents = [(idx, sents[idx]) for idx in sorted(idxs)]
+        if self.language == "en" and self.model == "gensim":
+            keysents = gensim.summarization.summarize(" ".join(sents), split=True)
+            keysents = keysents[:topk]
+        else:
+            self._sent_textrank(sents)
+            idxs = self.R.argsort()[-topk:]
+            keysents = [(idx, sents[idx]) for idx in sorted(idxs)]
         return keysents
 
     def keywords(self, sents: List[str], topk: int = 10) -> List[str]:
-        self.word_textrank(sents)
-        idxs = self.wr.argsort()[-topk:]
-        keywords = [self.idx_vocab[idx] for idx in reversed(idxs)]
+        if self.language == "en" and self.model == "gensim":
+            keywords = gensim.summarization.keywords(" ".join(sents), split=True, lemmatize=True)
+            keywords = keywords[:topk]
+        else:
+            self._word_textrank(sents)
+            idxs = self.wr.argsort()[-topk:]
+            keywords = [self.idx_vocab[idx] for idx in reversed(idxs)]
         return keywords
