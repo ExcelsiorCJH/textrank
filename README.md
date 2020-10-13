@@ -6,6 +6,15 @@ Code for [TextRank: Brining Order into Texts](https://web.eecs.umich.edu/~mihalc
 Some codes and spliting files are inspired by [lovit/textrank](https://github.com/lovit/textrank)
 
 
+
+## PyQt5
+
+![](./images/pyqt.gif)
+
+
+
+
+
 ## Usage 
 
 ### in Python
