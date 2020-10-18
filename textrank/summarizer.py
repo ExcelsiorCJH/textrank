@@ -103,7 +103,8 @@ class TextRank:
         else:
             self._sent_textrank(sents)
             idxs = self.R.argsort()[-topk:]
-            keysents = [(idx, sents[idx]) for idx in sorted(idxs)]
+            # keysents = [(idx, sents[idx]) for idx in sorted(idxs)]
+            keysents = [sents[idx] for idx in sorted(idxs)]
         return keysents
 
     def keywords(self, sents: List[str], topk: int = 10) -> List[str]:

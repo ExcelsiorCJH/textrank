@@ -3,8 +3,10 @@ import re
 import numpy as np
 import pandas as pd
 import spacy
+import kss  # pip install kss
 
 from glob import glob
+from konlpy.tag import Kkma
 from pdfminer.high_level import extract_text
 from .types_ import *
 
@@ -16,7 +18,7 @@ warnings.filterwarnings(action="ignore")
 NLP = spacy.load("en_core_web_sm")
 
 
-def pdf_to_text(file_path: str) -> List[str]:
+def pdf_to_text(file_path: str, language: str) -> List[str]:
     """
     PDF to Text method
     ===================
@@ -24,7 +26,7 @@ def pdf_to_text(file_path: str) -> List[str]:
     ---------
     file_path : str
         path of pdf file
-    
+
     Returns
     -------
     sentences : list of str
@@ -33,18 +35,20 @@ def pdf_to_text(file_path: str) -> List[str]:
     # 1. pdf -> text
     text = extract_text(file_path)
     # 2. sentence split
-    doc = NLP(text)
-    sentences = [sent.text for sent in doc.sents]
-    # 3. text cleaning
-    sentences = [clean_text(sent) for sent in sentences]
-    avg_sent_len = np.mean([len(sent) for sent in sentences])
+    if language == "en":
+        doc = nlp(text)
+        sentences = [sent.text for sent in doc.sents]
+        sentences = [clean_text(sent) for sent in sentences]
+    else:
+        sentences = text.split(". ")
+        sentences = [clean_text(sent, remove_num=True) for sent in sentences]
 
-    # 3. extract sentences
+    avg_sent_len = np.mean([len(sent) for sent in sentences])
     sentences = [sent for sent in sentences if len(sent) > avg_sent_len]
     return sentences
 
 
-def clean_text(text):
+def clean_text(text, remove_num=False):
     """기사 내용 전처리 함수
     Args:
         - text: str 형태의 텍스트
@@ -80,7 +84,9 @@ def clean_text(text):
     text = re.sub("[◇#/▶▲◆■●△①②③★○◎▽=▷☞◀ⓒ□?㈜♠☎]", "", text)
     # 따옴표 제거#
     text = re.sub("[\"'”“‘’]", "", text)
-    # 2안_숫자제거#
-    # text = regex.sub('[0-9]+',"",text)
+    if remove_num:
+        # 2안_숫자제거#
+        text = re.sub("[0-9]+", "", text)
+        text = re.sub(",", "", text)
     text = " ".join(text.split())
     return text
